@@ -1,0 +1,82 @@
+/* ==========================================================================
+   Experience page
+   ========================================================================== */
+
+.company__meta {
+  align-self: start;
+}
+
+@media (min-width: 761px) {
+  .company__meta {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+.company__name {
+  font-size: var(--fs-lg);
+}
+
+.company__span {
+  margin-top: 0.6rem;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.company__place {
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+}
+
+/* Roles within a company, joined by a thin vertical rule to show progression */
+.roles {
+  position: relative;
+  display: grid;
+  gap: 2.75rem;
+  padding-left: 1.75rem;
+  border-left: 1px solid var(--line);
+}
+
+.role {
+  position: relative;
+}
+
+.role::before {
+  content: "";
+  position: absolute;
+  left: calc(-1.75rem - 4px);
+  top: 0.55rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+}
+
+.role:first-child::before {
+  background: var(--accent);
+}
+
+.role__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.role__date {
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.role .dash-list {
+  max-width: 46rem;
+}
+
+.role__tags {
+  margin-top: 1.25rem;
+}

@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Projects index page
+   Compact header and a card grid so every project and the research entry
+   are visible together with minimal scrolling.
+   ========================================================================== */
+
+.projects-header {
+  padding: clamp(2rem, 4vw, 3rem) 0 clamp(1.25rem, 3vw, 2rem);
+}
+
+.projects-header h1 {
+  max-width: none;
+  margin-top: 0.5rem;
+  font-size: var(--fs-xl);
+}
+
+.projects-header p {
+  max-width: none;
+  margin-top: 0.75rem;
+  font-size: var(--fs-base);
+}
+
+.projects-board {
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+/* ---------- Grid ---------- */
+
+.card-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+/* Research entry spans the full row */
+.card-grid__wide {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Card ---------- */
+
+.project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.4rem 1.4rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+.project-card:hover {
+  border-color: var(--line-strong);
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.project-card__label {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.project-card__title {
+  margin-top: 0.7rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  line-height: 1.25;
+}
+
+.project-card__kicker {
+  margin-top: 0.25rem;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.project-card__summary {
+  margin-top: 0.7rem;
+  padding-right: 1.5rem;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.project-card__arrow {
+  margin-top: auto;
+  padding-top: 1rem;
+  align-self: flex-end;
+  color: var(--text-faint);
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.project-card:hover .project-card__arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+/* Research card: same family, tinted so it reads as a separate category */
+.project-card--research {
+  background: var(--bg-alt);
+}
+
+.project-card--research:hover {
+  background: var(--accent-soft);
+}
+
+.project-card--research .project-card__label {
+  color: var(--accent);
+}
+
+.project-card--research .project-card__summary {
+  max-width: 46rem;
+}

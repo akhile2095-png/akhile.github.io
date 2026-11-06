@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Components: reusable pieces shared by more than one page
+   ========================================================================== */
+
+/* ---------- Eyebrow label ---------- */
+
+.eyebrow {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Larger serif label for section headings in a "label | content" row */
+.section-label {
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+/* ---------- Buttons & links ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.btn--primary {
+  background: var(--text);
+  color: var(--surface);
+}
+
+.btn--primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--accent);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.text-link .arrow,
+.btn .arrow {
+  transition: transform var(--dur) var(--ease);
+}
+
+.text-link:hover .arrow,
+.btn:hover .arrow {
+  transform: translateX(3px);
+}
+
+.text-link--back:hover .arrow {
+  transform: translateX(-3px);
+}
+
+/* Small accent link at the end of a sentence or bullet */
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.35rem;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.inline-link .arrow {
+  transition: transform var(--dur) var(--ease);
+}
+
+.inline-link:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* ---------- Tags ---------- */
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+}
+
+.tag {
+  padding: 0.22rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ---------- Bulleted list with a fine dash ---------- */
+
+.dash-list {
+  list-style: none;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.dash-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+}
+
+.dash-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.55rem;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.dash-list strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ---------- Reveal-on-scroll (only when JS is running) ---------- */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

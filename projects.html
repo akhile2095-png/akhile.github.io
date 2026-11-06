@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projects &amp; Research · Akhil Elango</title>
+  <meta name="description" content="Projects and research by Akhil Elango: LLM pipelines, natural-language querying, forecasting and multimodal emotion recognition.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/projects.css">
+</head>
+<body data-page="projects">
+  <div data-site-header></div>
+
+  <main>
+    <header class="page-header projects-header">
+      <div class="container">
+        <span class="eyebrow reveal">Projects &amp; research</span>
+        <h1 class="reveal" style="--reveal-delay: 60ms">Systems I’ve built, and what they changed.</h1>
+        <p class="reveal" style="--reveal-delay: 100ms">Each one opens into a deep dive: problem, architecture, decisions, evaluation and impact.</p>
+      </div>
+    </header>
+
+    <div class="container projects-board">
+      <ul class="card-grid">
+        <li class="reveal">
+          <a class="project-card" href="projects/clinicalextract.html">
+            <span class="project-card__label">Project 01</span>
+            <span class="project-card__title">ClinicalExtract</span>
+            <span class="project-card__kicker">LLM Pipeline for Scanned Medical Reports</span>
+            <span class="project-card__summary">Turning scanned PDFs into structured, ERP-ready data, cutting manual entry by 70%.</span>
+            <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        <li class="reveal" style="--reveal-delay: 60ms">
+          <a class="project-card" href="projects/askyourdata.html">
+            <span class="project-card__label">Project 02</span>
+            <span class="project-card__title">AskYourData</span>
+            <span class="project-card__kicker">Natural-Language Querying over PostgreSQL</span>
+            <span class="project-card__summary">Safe, structured data access with LLM function calling, cutting query time by 40%.</span>
+            <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        <li class="reveal" style="--reveal-delay: 120ms">
+          <a class="project-card" href="projects/devicecast.html">
+            <span class="project-card__label">Project 03</span>
+            <span class="project-card__title">DeviceCast</span>
+            <span class="project-card__kicker">Time-Series Forecasting for Capacity Planning</span>
+            <span class="project-card__summary">Per-customer SARIMA forecasts of daily device activations, benchmarked against LSTM and a seasonal naive baseline.</span>
+            <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        <!-- DocPilot is hidden until the project is built. To show it again, remove these comment markers.
+        <li class="reveal" style="--reveal-delay: 180ms">
+          <a class="project-card" href="projects/docpilot.html">
+            <span class="project-card__label">Project 04</span>
+            <span class="project-card__title">DocPilot</span>
+            <span class="project-card__kicker">A RAG Server for Messy Documents via MCP</span>
+            <span class="project-card__summary">Retrieval over unstructured documents, exposed to AI assistants through the Model Context Protocol.</span>
+            <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        -->
+        <li class="card-grid__wide reveal" style="--reveal-delay: 180ms">
+          <a class="project-card project-card--research" href="projects/emotion-recognition.html">
+            <span class="project-card__label">Research · MSc dissertation · Trinity College Dublin · 2026</span>
+            <span class="project-card__title">Multimodal Emotion Recognition using Transformers</span>
+            <span class="project-card__summary">Adapting a sentiment analysis architecture to recognise six emotions from text, audio and video, and finding out what really limits its performance.</span>
+            <span class="project-card__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="js/site.js"></script>
+</body>
+</html>

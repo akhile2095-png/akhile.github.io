@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeviceCast · Akhil Elango</title>
+  <meta name="description" content="DeviceCast: Time-Series Forecasting for Capacity Planning. A deep dive by Akhil Elango.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages/project-detail.css">
+</head>
+<body data-page="projects" data-root="../">
+  <div data-site-header></div>
+
+  <main>
+    <header class="page-header case-header">
+      <div class="container">
+        <a class="text-link text-link--back reveal" href="../projects.html"><span class="arrow" aria-hidden="true">&larr;</span> All projects</a>
+        <span class="eyebrow case-header__label reveal">Project 03</span>
+        <h1 class="reveal" style="--reveal-delay: 60ms">DeviceCast</h1>
+        <p class="case-header__kicker reveal" style="--reveal-delay: 100ms">Time-Series Forecasting for Capacity Planning</p>
+        <p class="reveal" style="--reveal-delay: 140ms">Per-customer SARIMA forecasts of daily device activations, benchmarked against LSTM and a seasonal naive baseline.</p>
+      </div>
+    </header>
+
+    <div class="container case">
+      <nav class="case__toc" aria-label="On this page">
+        <span class="case__toc-title">On this page</span>
+        <ol>
+          <li><a href="#problem">Problem and context</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#role">My role</a></li>
+          <li><a href="#evaluation">Evaluation</a></li>
+          <li><a href="#impact">Business impact</a></li>
+          <li><a href="#lessons">Trade-offs and lessons</a></li>
+        </ol>
+      </nav>
+
+      <article class="case__content">
+        <section class="case-section reveal" id="problem">
+          <span class="case-section__num">01</span>
+          <h2>Problem and context</h2>
+          <p>A telecom management company tracked devices for its customers, telecom carriers around the world. For every device, it recorded when it was activated, meaning when it was bought and switched on.</p>
+          <p>The client wanted to use this history to predict how many devices each customer would activate over the next 30 days, so they could plan device stock ahead of demand: neither running short during peaks nor holding too much stock in quieter periods. They also wanted to understand what drove demand: long-term trends, and seasonal patterns such as holiday peaks.</p>
+          <p>I built forecasting models for the client’s top 10 customers, each with activation records for around a million devices. The models captured each customer’s trend and seasonality, and the forecasts ran automatically every month.</p>
+        </section>
+
+        <section class="case-section reveal" id="architecture">
+          <span class="case-section__num">02</span>
+          <h2>Architecture diagram</h2>
+          <figure class="diagram">
+            <div class="diagram__media">
+              <!-- Put your image in assets/ and set the file name in the src below -->
+              <img src="../assets/devicecast_architecture.png" alt="DeviceCast architecture on AWS: device activation timestamps in S3 are aggregated by Athena into daily counts; EventBridge triggers a quarterly SageMaker training pipeline that saves a candidate model for human review, and a monthly SageMaker Batch Transform job forecasting the next 30 days and summing them into a monthly forecast, whose results are queried in Athena or QuickSight; CloudWatch alerts when forecast error crosses a threshold." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Architecture diagram</div>
+            </div>
+            <figcaption>Two tracks on different schedules: quarterly training and monthly forecasting.</figcaption>
+          </figure>
+
+          <p>The system runs on AWS.</p>
+
+          <h3 class="case-section__sub">Data</h3>
+          <ul class="dash-list">
+            <li><strong>Storage.</strong> Raw device activation timestamps are stored in Amazon S3.</li>
+            <li><strong>Scheduling.</strong> Amazon EventBridge triggers the training pipeline every three months and the forecasting job every month.</li>
+            <li><strong>Data preparation.</strong> A scheduled Athena query aggregates the raw activations into daily counts per customer and writes them to a curated S3 location.</li>
+          </ul>
+
+          <h3 class="case-section__sub">Training (every three months)</h3>
+          <ul class="dash-list">
+            <li><strong>Training pipeline.</strong> SageMaker Pipelines reads the curated data, fits one SARIMA model per customer (10 in total) with auto_arima, evaluates them with walk-forward cross-validation, and saves the models (joblib) and their metrics to S3.</li>
+            <li><strong>Candidate model.</strong> The newly trained model is saved as a candidate, with its metrics and a comparison against the model currently in production. It isn’t used for forecasting yet.</li>
+            <li><strong>Human review.</strong> I review the metrics and comparison. Only if the new model performs better is production pointed to it; otherwise the current model stays in place.</li>
+          </ul>
+
+          <h3 class="case-section__sub">Forecasting (every month)</h3>
+          <ul class="dash-list">
+            <li><strong>Batch forecast.</strong> SageMaker Batch Transform loads the latest data and the approved model, forecasts the next 30 days for each customer, sums the values into a monthly forecast, and writes the results to S3.</li>
+            <li><strong>Serving.</strong> Capacity planners query the forecasts in Athena or view them in QuickSight, either as daily values or summed by month, to plan device stock.</li>
+          </ul>
+
+          <h3 class="case-section__sub">Monitoring</h3>
+          <ul class="dash-list">
+            <li><strong>Alerts.</strong> A comparison job checks actual activations against past forecasts. CloudWatch sends an automated alert when the error crosses a threshold, so the team can investigate and retrain early if needed.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="role">
+          <span class="case-section__num">03</span>
+          <h2>My role</h2>
+          <p>I owned this project end to end: building the models, deploying them, and monitoring them in production.</p>
+          <figure class="diagram diagram--bare diagram--wide diagram--zoom">
+            <div class="diagram__media">
+              <img src="../assets/devicecast_workflow.png" alt="DeviceCast workflow: scoping the top 10 customers, exploring each customer's series, comparing models, training one SARIMA model per customer, and deploying with human approval." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Workflow diagram</div>
+            </div>
+            <figcaption>End-to-end workflow, from scoping to monitored deployment.</figcaption>
+          </figure>
+          <ul class="decisions">
+            <li><strong>Scoping.</strong> I started with the client’s top 10 customers by total device activations. This was where accurate forecasts mattered most for stock planning.</li>
+            <li><strong>Exploring the data.</strong> I aggregated the raw activations in Athena into daily counts per customer, then explored each customer’s series:
+              <ul class="dash-list decisions__nested">
+                <li><strong>STL decomposition</strong> separated trend and seasonality. Each customer had its own seasonal pattern, peaking at different times of year.</li>
+                <li><strong>Stationarity tests</strong> showed which series needed differencing before modelling.</li>
+                <li><strong>Outlier analysis</strong> found days with unusually high or low counts, usually caused by bulk activations. I handled these as one-off events, so they didn’t distort the trend the model learned.</li>
+              </ul>
+            </li>
+            <li><strong>Choosing the model.</strong> I compared a seasonal naive baseline, ARIMA, SARIMA and LSTM using walk-forward cross-validation, scored on MAE and MAPE. Including the naive baseline meant every model had to prove it added value over simply repeating last season. SARIMA performed best, so I tuned it with auto_arima.</li>
+            <li><strong>One model per customer.</strong> Because each customer’s seasonality was different, I trained a separate SARIMA model for each of the 10 customers rather than a single combined model.</li>
+            <li><strong>Deployment with human approval.</strong> New models go live only after I review them against the production model (see Trade-offs).</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="evaluation">
+          <span class="case-section__num">04</span>
+          <h2>Evaluation against a baseline</h2>
+          <figure class="diagram diagram--bare">
+            <div class="diagram__media">
+              <img src="../assets/devicecast_walk_forward.png" alt="Expanding-window walk-forward validation: the model trains on the first 24 months of daily data, forecasts the next 30 days and records the error, then that month is added to the training set and the process repeats across the remaining 12 months." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Walk-forward diagram</div>
+            </div>
+            <figcaption>Expanding-window walk-forward validation used for backtesting.</figcaption>
+          </figure>
+          <ul class="decisions">
+            <li><strong>Backtesting.</strong> I used expanding-window walk-forward validation. The models trained on the first 24 months of daily data, forecast the next 30 days, and recorded the error. That month was then added to the training set, and the process repeated across the remaining 12 months. This mirrors production, where the model forecasts about 30 days ahead from all available history.</li>
+            <li><strong>Model selection.</strong> I compared models on average MAPE and MAE against a seasonal naive baseline. I tuned on the earlier folds and kept the final months as an untouched test set, so the reported accuracy came from data the models had never seen. After selection, I retrained the final models on all the data.</li>
+            <li><strong>Retraining.</strong> At each quarterly retrain, the candidate model was compared with the production model on the same metrics, and it replaced the production model only if it improved them.</li>
+            <li><strong>Live monitoring.</strong> After deployment, I tracked a rolling 14-day error as a burn-in period, to confirm live performance matched the backtests. The business metric throughout was monthly MAPE, against a target of 5–8%. Once the models had stayed within their backtested error range for a couple of months, I moved to monthly reviews, with an automated rolling-error alert in the background to catch drift.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="impact">
+          <span class="case-section__num">05</span>
+          <h2>Business impact</h2>
+          <ul class="decisions">
+            <li><strong>40% less reporting time.</strong> Forecast reports were generated automatically every month instead of being compiled by hand.</li>
+            <li><strong>Stock planned ahead of demand.</strong> Planners had a 30-day forecast for each customer, so they could time device stock before demand changed rather than after.</li>
+            <li><strong>Forecasts planners could trust.</strong> Monthly error stayed within the business’s 5–8% MAPE target.</li>
+            <li><strong>A clearer view of demand.</strong> The analysis showed each customer’s own trend and seasonal peaks, which planners used in customer-level demand discussions.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="lessons">
+          <span class="case-section__num">06</span>
+          <h2>Design trade-offs and lessons learned</h2>
+          <ul class="decisions">
+            <li><strong>Human approval instead of an automatic quality gate.</strong> Retraining only happened once a quarter, and this was the first time the client had run the system. So instead of letting the pipeline promote models automatically, I reviewed each new model’s metrics against the current one before switching production over. This was slower, but it kept a person accountable for every model that went live, which suited a first deployment that directly drove stock decisions.</li>
+            <li><strong>Alerts instead of automatic retraining.</strong> Drift didn’t trigger retraining by itself. When an alert fired, I investigated the cause in the data and the model, and retrained only once I understood the new data. This avoided retraining on a temporary blip and left a record of each drift event for future reference.</li>
+            <li><strong>Leaving out the COVID years.</strong> I excluded 2020–2021 from training because demand in that period was abnormal and would have distorted the patterns the model learned for normal years. This meant a shorter history, but one that better reflected current behaviour.</li>
+            <li><strong>One model per customer instead of a global model.</strong> The top 10 customers were in different countries, so their seasonal peaks and public holidays fell at different times of year. A single global model would have blurred these differences, so I trained a separate model for each customer. The cost is maintaining 10 models instead of one.</li>
+            <li><strong>What I’d try next.</strong> Grouping customers by region and training regional models could have balanced accuracy and maintenance, since customers in the same region likely share holidays and seasonal patterns. I’d test whether that matches the per-customer models’ accuracy.</li>
+            <li><strong>Lesson: simple models can win.</strong> SARIMA beat the LSTM on this data. With a few years of daily data per customer, a well-tuned classical model was more accurate and much easier to explain to planners. Starting with a seasonal naive baseline kept every model honest.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+
+    <nav class="container pager" aria-label="More projects">
+      <a class="pager__link" href="askyourdata.html">
+        <span class="pager__dir"><span class="arrow" aria-hidden="true">&larr;</span> Previous</span>
+        <span class="pager__title">AskYourData</span>
+      </a>
+      <a class="pager__link pager__link--next" href="emotion-recognition.html">
+        <span class="pager__dir">Next <span class="arrow" aria-hidden="true">&rarr;</span></span>
+        <span class="pager__title">Multimodal Emotion Recognition</span>
+      </a>
+    </nav>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="../js/site.js"></script>
+  <script src="../js/project.js"></script>
+</body>
+</html>

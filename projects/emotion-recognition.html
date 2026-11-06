@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multimodal Emotion Recognition using Transformers · Akhil Elango</title>
+  <meta name="description" content="Multimodal Emotion Recognition using Transformers: MSc dissertation, Trinity College Dublin. A deep dive by Akhil Elango.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages/project-detail.css">
+</head>
+<body data-page="projects" data-root="../">
+  <div data-site-header></div>
+
+  <main>
+    <header class="page-header case-header">
+      <div class="container">
+        <a class="text-link text-link--back reveal" href="../projects.html"><span class="arrow" aria-hidden="true">&larr;</span> All projects</a>
+        <span class="eyebrow case-header__label reveal">Research</span>
+        <h1 class="reveal" style="--reveal-delay: 60ms">Multimodal Emotion Recognition using Transformers</h1>
+        <p class="case-header__kicker reveal" style="--reveal-delay: 100ms">MSc Dissertation · Trinity College Dublin · 2026</p>
+        <p class="reveal" style="--reveal-delay: 140ms">Adapting a sentiment analysis architecture to recognise six emotions from text, audio and video, and finding out what really limits its performance.</p>
+      </div>
+    </header>
+
+    <div class="container case">
+      <nav class="case__toc" aria-label="On this page">
+        <span class="case__toc-title">On this page</span>
+        <ol>
+          <li><a href="#question">Research question</a></li>
+          <li><a href="#approach">Approach</a></li>
+          <li><a href="#results">Results</a></li>
+          <li><a href="#findings">Key findings</a></li>
+          <li><a href="#limitations">Limitations and future work</a></li>
+        </ol>
+      </nav>
+
+      <article class="case__content">
+        <section class="case-section reveal" id="question">
+          <span class="case-section__num">01</span>
+          <h2>Research question</h2>
+          <p>Multimodal emotion recognition identifies how someone feels by combining what they say (text), how they say it (audio), and their facial expressions (video).</p>
+          <figure class="diagram">
+            <div class="diagram__media">
+              <img src="../assets/mer-concept.png" alt="Multimodal emotion recognition concept: text (what is said), audio (how it is said) and video (facial expression) are combined to predict how someone feels." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Concept diagram</div>
+            </div>
+            <figcaption>Three signals, one prediction: what is said, how it is said, and the facial expression.</figcaption>
+          </figure>
+          <p>TMBL (Transformer-based Multimodal Binding Learning; Huang et al., 2024) is a recent architecture built for sentiment analysis, which predicts whether an opinion is positive or negative. My dissertation asked two questions:</p>
+          <ol class="steps">
+            <li>Can TMBL be adapted to recognise six emotions: happy, sad, anger, surprise, disgust and fear?</li>
+            <li>If its performance is limited, is the cause the model or the data?</li>
+          </ol>
+        </section>
+
+        <section class="case-section reveal" id="approach">
+          <span class="case-section__num">02</span>
+          <h2>Approach</h2>
+          <p><strong>Dataset.</strong> CMU-MOSEI: about 23,000 video clips of people speaking to camera, each labelled with the emotions viewers perceived.</p>
+          <p><strong>Architecture.</strong> TMBL processes each modality separately first (BERT for text, LSTMs for audio and video), then combines them in pairs and all three together through a modified transformer block. It separates what the modalities share from what is unique to each, and trains with three losses that encourage this separation.</p>
+          <figure class="diagram">
+            <div class="diagram__media">
+              <!-- Put your image in assets/ and set the file name in the src below -->
+              <img src="../assets/mer-architecture.png" alt="TMBL architecture: BERT for text and LSTMs for audio and video process each modality separately, then a modified transformer block combines them in pairs and all three together, trained with three losses that separate shared and unique information." data-fallback>
+              <div class="diagram__frame diagram__placeholder">TMBL architecture diagram</div>
+            </div>
+            <figcaption>The TMBL architecture.</figcaption>
+          </figure>
+
+          <h3 class="case-section__sub">My work, step by step</h3>
+          <ol class="steps">
+            <li><strong>Replicated the original results.</strong> I reproduced TMBL’s published sentiment results to confirm the implementation was correct before changing anything.</li>
+            <li><strong>Fixed the data pipeline.</strong> Early results looked suspiciously poor, so I audited the dataset construction and found four bugs:
+              <ul class="dash-list decisions__nested">
+                <li>normalisation applied per clip, which erased much of the audio and video signal</li>
+                <li>infinite values in the audio features silently becoming extreme numbers</li>
+                <li>a visual feature set of 713 dimensions where 35 were intended</li>
+                <li>data segments being dropped without any record</li>
+              </ul>
+              I fixed all four before running any experiments.
+            </li>
+            <li><strong>Adapted the model for emotions.</strong> I changed the output to six independent yes/no predictions, one per emotion, and switched the loss function to match.</li>
+            <li><strong>Ran a series of experiments:</strong> handling class imbalance, testing the text pathway (attention pooling and a stronger RoBERTa encoder), tuning decision thresholds, removing each modality in turn, and a “ceiling analysis” to measure how much audio and video could possibly add.</li>
+          </ol>
+        </section>
+
+        <section class="case-section reveal" id="results">
+          <span class="case-section__num">03</span>
+          <h2>Results</h2>
+          <p><strong>Headline: macro F1 rose from 0.385 to 0.462.</strong> Macro F1 is the average detection score across all six emotions, with rare emotions counted equally.</p>
+          <figure class="diagram">
+            <div class="diagram__media">
+              <!-- Put your image in assets/ and set the file name in the src below -->
+              <img src="../assets/mer-f1-comparison.png" alt="Chart of macro F1 improving from 0.385 to 0.462 across the experiments." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Improvement chart</div>
+            </div>
+            <figcaption>Macro F1 across experiments.</figcaption>
+          </figure>
+
+          <ul class="decisions">
+            <li><strong>Class imbalance was the first problem.</strong> Fear and surprise appear in under 10% of clips, so the model mostly ignored them. Weighting the loss towards rare emotions gave the biggest single gain (0.385 → 0.438).</li>
+            <li><strong>A better text encoder helped a little.</strong> Switching BERT for RoBERTa added 0.015, and tuning a separate decision threshold for each emotion added 0.009.</li>
+            <li><strong>Against prior work.</strong> The final model beat a published benchmark (Akhtar et al., 2019) on weighted accuracy (66.9% vs 61.3–62.8%), but trailed it on weighted F1 (73.1% vs 76.2–78.6%). The gap was mainly on rare emotions.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="findings">
+          <span class="case-section__num">04</span>
+          <h2>Key findings</h2>
+          <ul class="decisions">
+            <li><strong>The model is driven almost entirely by text.</strong> Removing text cost 0.096 macro F1. Removing both audio and video together cost only 0.017.</li>
+            <li><strong>The bottleneck is the dataset, not the model.</strong> A ceiling analysis showed audio and video could add at most 0.0167 macro F1 on top of text, and the model already captured about 97% of it. A better fusion design couldn’t have done much better on this data.</li>
+            <li><strong>This matters beyond my project.</strong> Because CMU-MOSEI is so text-dominant, it’s a weak benchmark for comparing multimodal fusion architectures. Improvements credited to a fusion design may really come from the text pathway.</li>
+            <li><strong>Check the data before blaming the model.</strong> The pipeline bugs I found would have made every later result misleading.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="limitations">
+          <span class="case-section__num">05</span>
+          <h2>Limitations and future work</h2>
+          <h3 class="case-section__sub">Limitations</h3>
+          <ul class="dash-list">
+            <li>Each configuration was run without recording variance across runs, so small differences between configurations are observed differences, not statistically tested ones.</li>
+            <li>The ceiling analysis used simple linear models, so it gives a practical estimate rather than an absolute limit.</li>
+            <li>All findings are specific to CMU-MOSEI.</li>
+          </ul>
+
+          <h3 class="case-section__sub">What I’d do next</h3>
+          <ul class="decisions">
+            <li><strong>Test on richer data.</strong> IEMOCAP, where audio and video carry more emotional information, would give the fusion mechanism a fairer test.</li>
+            <li><strong>Use frame-level features.</strong> Averaging audio and video across each word likely removes fine emotional detail. Keeping the frames would show whether the low ceiling comes from the dataset or from how features were extracted.</li>
+            <li><strong>Weight modalities dynamically.</strong> Some sentences show emotion through words, others through tone or expression. Letting the model weight each modality per sample could use audio and video where they actually help.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+
+    <nav class="container pager" aria-label="More projects">
+      <a class="pager__link" href="devicecast.html">
+        <span class="pager__dir"><span class="arrow" aria-hidden="true">&larr;</span> Previous</span>
+        <span class="pager__title">DeviceCast</span>
+      </a>
+      <a class="pager__link pager__link--next" href="clinicalextract.html">
+        <span class="pager__dir">Next <span class="arrow" aria-hidden="true">&rarr;</span></span>
+        <span class="pager__title">ClinicalExtract</span>
+      </a>
+    </nav>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="../js/site.js"></script>
+  <script src="../js/project.js"></script>
+</body>
+</html>

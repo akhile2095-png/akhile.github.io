@@ -1,0 +1,370 @@
+/* ==========================================================================
+   Project / research deep-dive page
+   ========================================================================== */
+
+/* ---------- Header ---------- */
+
+.case-header {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.case-header__label {
+  display: block;
+  margin-top: 2.5rem;
+}
+
+.case-header h1 {
+  max-width: 22ch;
+}
+
+.page-header .case-header__kicker {
+  margin-top: 0.75rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  color: var(--accent);
+}
+
+/* ---------- Body: sticky contents + article ---------- */
+
+.case {
+  display: grid;
+  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+  gap: 3rem;
+  padding-top: clamp(2.5rem, 6vw, 4rem);
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.case__toc {
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+}
+
+.case__toc-title {
+  display: block;
+  margin-bottom: 0.9rem;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.case__toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--line);
+}
+
+.case__toc a {
+  display: block;
+  margin-left: -1px;
+  padding: 0.35rem 0 0.35rem 0.9rem;
+  border-left: 1px solid transparent;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.case__toc a:hover {
+  color: var(--text);
+}
+
+.case__toc a.is-active {
+  color: var(--text);
+  border-left-color: var(--accent);
+}
+
+.case__content {
+  display: grid;
+  gap: clamp(3rem, 6vw, 4.5rem);
+}
+
+/* Text stays at a readable measure; wide figures may use the full column */
+.case-section > :not(.diagram--wide) {
+  max-width: 44rem;
+}
+
+@media (max-width: 860px) {
+  .case {
+    grid-template-columns: 1fr;
+  }
+
+  .case__toc {
+    display: none;
+  }
+}
+
+/* ---------- Sections ---------- */
+
+.case-section {
+  scroll-margin-top: 6rem;
+}
+
+.case-section__num {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--fs-xs);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.case-section h2 {
+  margin-bottom: 1.25rem;
+}
+
+.case-section p + p {
+  margin-top: 1rem;
+}
+
+.case-section p,
+.case-section li {
+  color: var(--text-muted);
+}
+
+/* Placeholder until real content is written */
+.placeholder {
+  padding: 2rem 1.5rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+  text-align: center;
+}
+
+/* ---------- Diagram ---------- */
+
+.diagram {
+  margin: 0;
+}
+
+.diagram__frame,
+.diagram img {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.diagram__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  border-style: dashed;
+  border-color: var(--line-strong);
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+}
+
+.diagram figcaption {
+  margin-top: 0.75rem;
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+}
+
+/* Image with a dashed placeholder shown until the file exists (see data-fallback in site.js) */
+.diagram__media .diagram__placeholder {
+  display: none;
+}
+
+.diagram__media.has-fallback img {
+  display: none;
+}
+
+.diagram__media.has-fallback .diagram__placeholder {
+  display: flex;
+}
+
+/* Images that already carry their own background and rounded corners */
+.diagram--bare {
+  margin: 2rem 0;
+}
+
+.diagram--bare img {
+  height: auto;
+  border: 0;
+  background: none;
+}
+
+/* Click-to-enlarge image (see js/project.js) */
+.diagram--zoom img {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  max-width: 96vw;
+  max-height: 96vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.lightbox::backdrop {
+  background: rgba(247, 242, 234, 0.94);
+}
+
+.lightbox img {
+  display: block;
+  max-width: 94vw;
+  max-height: 90vh;
+  border-radius: var(--radius);
+  cursor: zoom-out;
+}
+
+/* ---------- Prose: sub-heading, numbered steps, decisions ---------- */
+
+.case-section__sub {
+  margin: 2.5rem 0 1rem;
+  font-size: var(--fs-md);
+}
+
+.steps {
+  list-style: none;
+  counter-reset: step;
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+}
+
+.steps li {
+  position: relative;
+  padding-left: 2.25rem;
+  counter-increment: step;
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  display: grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-size: var(--fs-xs);
+  color: var(--accent);
+}
+
+.decisions {
+  list-style: none;
+  display: grid;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.decisions li {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Sub-points inside a decision */
+.decisions__nested {
+  margin-top: 0.75rem;
+}
+
+.steps strong,
+.decisions strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.decisions strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-md);
+  font-weight: 400;
+}
+
+/* ---------- Results table (for the evaluation section) ---------- */
+
+.results {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.results th,
+.results td {
+  padding: 0.7rem 0.75rem 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.results th {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.results td {
+  color: var(--text-muted);
+}
+
+/* ---------- Previous / next ---------- */
+
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding-bottom: clamp(3rem, 6vw, 4rem);
+}
+
+.pager__link {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+.pager__link:hover {
+  border-color: var(--line-strong);
+  background: var(--surface);
+}
+
+.pager__link--next {
+  text-align: right;
+}
+
+.pager__dir {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.pager__title {
+  font-family: var(--font-serif);
+  font-size: var(--fs-md);
+}
+
+.pager__link:hover .arrow {
+  transform: translateX(3px);
+}
+
+.pager__link:first-child:hover .arrow {
+  transform: translateX(-3px);
+}
+
+.pager .arrow {
+  display: inline-block;
+  transition: transform var(--dur) var(--ease);
+}
+
+@media (max-width: 560px) {
+  .pager {
+    grid-template-columns: 1fr;
+  }
+
+  .pager__link--next {
+    text-align: left;
+  }
+}

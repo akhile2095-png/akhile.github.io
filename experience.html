@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Experience · Akhil Elango</title>
+  <meta name="description" content="Work experience of Akhil Elango: Senior Data Scientist at Third Ray, Data Science Engineer at Axiscades.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/experience.css">
+</head>
+<body data-page="experience">
+  <div data-site-header></div>
+
+  <main>
+    <header class="page-header">
+      <div class="container">
+        <span class="eyebrow reveal">Work experience</span>
+        <h1 class="reveal" style="--reveal-delay: 60ms">Seven years across data science and engineering.</h1>
+        <p class="reveal" style="--reveal-delay: 120ms">
+          From structural analysis of aircraft wings to production LLM systems. Each move kept the same thread:
+          turning messy real-world data into decisions people can act on.
+        </p>
+      </div>
+    </header>
+
+    <!-- Third Ray -->
+    <section class="section company">
+      <div class="container split">
+        <div class="company__meta reveal">
+          <h2 class="company__name">Third Ray, Inc.</h2>
+          <p class="company__span">Mar 2022 – Sept 2025</p>
+          <p class="company__place">Bangalore, India</p>
+        </div>
+
+        <div class="roles">
+          <article class="role reveal">
+            <header class="role__head">
+              <h3>Senior Data Scientist</h3>
+              <time class="role__date">Mar 2023 – Sept 2025</time>
+            </header>
+            <ul class="dash-list">
+              <li>Built an LLM-based medical report extraction system in Python, deployed as a containerised Flask API (Docker), that extracts structured clinical data from scanned PDFs for direct ERP ingestion, <strong>cutting manual data entry by 70%</strong>. <a class="inline-link" href="projects/clinicalextract.html">ClinicalExtract deep dive <span class="arrow" aria-hidden="true">&rarr;</span></a></li>
+              <li>Built a deep neural network (DNN) classifier in Python to detect potentially tampered devices for a client’s key customers using device data. Automated monthly batch scoring, <strong>reducing manual screening effort by 60%</strong>. The classifier helped identify software vulnerabilities and new jailbreak techniques.</li>
+              <li>Designed and built a chatbot in Python for the client’s business and executive teams to answer customer performance questions. Wrote the SQL-backed functions for each question type, with descriptions and parameters, and integrated them with OpenAI’s function-calling API, <strong>cutting the time to get an answer by 40%</strong>. <a class="inline-link" href="projects/askyourdata.html">AskYourData deep dive <span class="arrow" aria-hidden="true">&rarr;</span></a></li>
+              <li>Led a team of 3 to deliver 5–6 interactive dashboards for 2 clients, covering customer performance tracking and financial KPI-vs-actual analysis. Built SQL data extraction and transformation workflows on Amazon Athena, improving decision-making efficiency.</li>
+              <li>Used AI coding tools (Cursor, Claude) to speed up implementation and documentation, and reviewed all generated code before merging.</li>
+            </ul>
+            <ul class="tag-list role__tags">
+              <li class="tag">LLMs</li>
+              <li class="tag">OpenAI function calling</li>
+              <li class="tag">Flask</li>
+              <li class="tag">Docker</li>
+              <li class="tag">Deep neural networks</li>
+              <li class="tag">Amazon Athena</li>
+              <li class="tag">SQL</li>
+            </ul>
+          </article>
+
+          <article class="role reveal">
+            <header class="role__head">
+              <h3>Data Scientist</h3>
+              <time class="role__date">Mar 2022 – Mar 2023</time>
+            </header>
+            <ul class="dash-list">
+              <li>Built and deployed per-customer SARIMA forecasting models for device registrations across a client’s top customers, benchmarking against a seasonal naive baseline, ARIMA and LSTM, and using STL decomposition to identify seasonal trends, <strong>reducing reporting time by 40%</strong>. <a class="inline-link" href="projects/devicecast.html">DeviceCast deep dive <span class="arrow" aria-hidden="true">&rarr;</span></a></li>
+              <li>Developed a Partial Least Squares (PLS) regression model that predicted quality parameters (density, viscosity) of aviation fuel from NIR spectroscopy data for fuel quality compliance checks, <strong>reducing lab analysis time by 60%</strong>.</li>
+              <li>Mentored high school students on Quantum Machine Learning research as part of a company outreach programme.</li>
+            </ul>
+            <ul class="tag-list role__tags">
+              <li class="tag">SARIMA</li>
+              <li class="tag">ARIMA</li>
+              <li class="tag">LSTM</li>
+              <li class="tag">STL decomposition</li>
+              <li class="tag">PLS regression</li>
+              <li class="tag">Scikit-learn</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Axiscades -->
+    <section class="section company">
+      <div class="container split">
+        <div class="company__meta reveal">
+          <h2 class="company__name">Axiscades Engineering Technologies</h2>
+          <p class="company__span">Sept 2018 – Apr 2021</p>
+          <p class="company__place">Bangalore, India</p>
+        </div>
+
+        <div class="roles">
+          <article class="role reveal">
+            <header class="role__head">
+              <h3>Data Science Engineer</h3>
+              <time class="role__date">Jan 2020 – Apr 2021</time>
+            </header>
+            <ul class="dash-list">
+              <li>Developed a Random Forest regression model to predict aircraft wing damage severity (1–5 scale) from structural damage reports, incorporating damage information of the affected area. Enabled engineers to prioritise complex cases faster, <strong>reducing manual analysis time by 50% with 93% accuracy</strong>.</li>
+            </ul>
+            <ul class="tag-list role__tags">
+              <li class="tag">Random Forest</li>
+              <li class="tag">Feature engineering</li>
+              <li class="tag">Python</li>
+            </ul>
+          </article>
+
+          <article class="role reveal">
+            <header class="role__head">
+              <h3>Design Engineer</h3>
+              <time class="role__date">Sept 2018 – Dec 2019</time>
+            </header>
+            <ul class="dash-list">
+              <li>Analysed aircraft wing damage reports and delivered repair solutions based on structural, material and aerodynamic requirements.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="js/site.js"></script>
+</body>
+</html>

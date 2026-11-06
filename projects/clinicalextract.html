@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClinicalExtract · Akhil Elango</title>
+  <meta name="description" content="ClinicalExtract: LLM Pipeline for Scanned Medical Reports. A deep dive by Akhil Elango.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages/project-detail.css">
+</head>
+<body data-page="projects" data-root="../">
+  <div data-site-header></div>
+
+  <main>
+    <header class="page-header case-header">
+      <div class="container">
+        <a class="text-link text-link--back reveal" href="../projects.html"><span class="arrow" aria-hidden="true">&larr;</span> All projects</a>
+        <span class="eyebrow case-header__label reveal">Project 01</span>
+        <h1 class="reveal" style="--reveal-delay: 60ms">ClinicalExtract</h1>
+        <p class="case-header__kicker reveal" style="--reveal-delay: 100ms">LLM Pipeline for Scanned Medical Reports</p>
+        <p class="reveal" style="--reveal-delay: 140ms">Turning scanned PDFs into structured, ERP-ready data, cutting manual entry by 70%.</p>
+      </div>
+    </header>
+
+    <div class="container case">
+      <nav class="case__toc" aria-label="On this page">
+        <span class="case__toc-title">On this page</span>
+        <ol>
+          <li><a href="#problem">Problem and context</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#role">My role</a></li>
+          <li><a href="#evaluation">Evaluation</a></li>
+          <li><a href="#impact">Business impact</a></li>
+          <li><a href="#lessons">Trade-offs and lessons</a></li>
+        </ol>
+      </nav>
+
+      <article class="case__content">
+        <section class="case-section reveal" id="problem">
+          <span class="case-section__num">01</span>
+          <h2>Problem and context</h2>
+          <p>A healthcare client needed to digitise a large backlog of medical reports (blood tests, thyroid panels and other report types) and load the results into their ERP system. A team was entering every value by hand, which was slow, expensive and error-prone.</p>
+          <p>The reports were scanned images inside PDFs, not digital text. Scans varied in angle, brightness and layout from one report to the next, and traditional OCR couldn’t extract values from them reliably. The client needed a system that could read these inconsistent scans and return clean, structured data their ERP could ingest directly.</p>
+        </section>
+
+        <section class="case-section reveal" id="architecture">
+          <span class="case-section__num">02</span>
+          <h2>Architecture diagram</h2>
+          <figure class="diagram">
+            <div class="diagram__media">
+              <!-- Put your image in assets/ and set the file name in the src below -->
+              <img src="../assets/medical_architecture.png" alt="ClinicalExtract architecture: a client uploads a PDF and report type to a Flask API in Docker, which pre-processes the pages, selects a system prompt, runs Gemini extraction and a second Gemini verification pass, and returns structured JSON to the client ERP system." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Architecture diagram</div>
+            </div>
+            <figcaption>Request flow from PDF upload to ERP-ready JSON.</figcaption>
+          </figure>
+
+          <h3 class="case-section__sub">How it works</h3>
+          <ol class="steps">
+            <li><strong>Upload.</strong> The client calls the API with the PDF and its report type (e.g. Blood, Thyroid).</li>
+            <li><strong>Pre-processing.</strong> Pages are processed with pypdfium and pypdf to improve image quality before extraction.</li>
+            <li><strong>Prompt routing.</strong> The report type selects a dedicated system prompt listing the exact parameters to extract for that report.</li>
+            <li><strong>Extraction (LLM 1).</strong> Gemini reads the processed pages and extracts the parameters, following strict rules on what to extract and how to handle missing values.</li>
+            <li><strong>Verification (LLM 2).</strong> A second call receives the original PDF and the first output, checks for missed or hallucinated values, and corrects them.</li>
+            <li><strong>Output.</strong> The verified result is returned as JSON, which the client uses to populate their ERP.</li>
+          </ol>
+        </section>
+
+        <section class="case-section reveal" id="role">
+          <span class="case-section__num">03</span>
+          <h2>My role</h2>
+          <p>I designed the full pipeline and wrote it in Python. The key decisions:</p>
+          <ul class="decisions">
+            <li><strong>Gemini over OpenAI.</strong> I chose the Gemini API for its lower cost and more generous usage limits, which mattered for processing large volumes of reports.</li>
+            <li><strong>A second LLM for verification.</strong> Single-pass extraction often hallucinated values or missed important ones. I added a verification step that compares the extracted output against the original PDF. This improved accuracy significantly and was the most important design decision in the system.</li>
+            <li><strong>One system prompt per report type.</strong> Each report type has different parameters, so I wrote a dedicated prompt for each, and the API selects the right one from the report type the client sends. This kept prompts focused and made adding new report types straightforward.</li>
+            <li><strong>Explicit rules for missing values.</strong> In medical data, a wrong value is worse than an empty one. The prompts instruct both models to leave a field empty if the value isn’t in the report, rather than guessing. In verification, any empty field is checked against the report and filled only if the value is actually present.</li>
+            <li><strong>A simple API contract.</strong> Exposing a single upload endpoint that returns JSON meant the client could integrate it directly with their ERP, without changing their workflow.</li>
+          </ul>
+          <figure class="diagram diagram--bare">
+            <div class="diagram__media">
+              <img src="../assets/clinicalextract-two-pass.png" alt="Illustrative thyroid report with synthetic values: the first LLM pass missed Free T4 and hallucinated an Anti-TPO value; the verification pass filled Free T4 from the report and left Anti-TPO empty." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Two-pass example</div>
+            </div>
+            <figcaption>Why a second pass: it fills values the first pass missed and removes values it invented.</figcaption>
+          </figure>
+        </section>
+
+        <section class="case-section reveal" id="evaluation">
+          <span class="case-section__num">04</span>
+          <h2>Evaluation against a baseline</h2>
+          <p>For each report type, I manually compared the extracted values against a set of real reports, checking every parameter against the source document.</p>
+          <p>I logged every mistake and looked for patterns: parameters that were commonly missed, and cases where the model produced values that weren’t in the report. I used those patterns to refine each system prompt, adding clearer parameter descriptions where values were being missed and stricter rules where the model was inventing values. I repeated this until the output was reliable for that report type.</p>
+          <figure class="diagram diagram--bare">
+            <div class="diagram__media">
+              <img src="../assets/clinicalextract-eval-loop.png" alt="Evaluation loop repeated for each report type: extract on sample reports, compare every value to the source, log mistakes, find patterns, refine the prompt, then repeat until the output is reliable." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Evaluation loop diagram</div>
+            </div>
+            <figcaption>Manual evaluation loop used to refine each report type’s system prompt.</figcaption>
+          </figure>
+          <p>Once the client started using the API, their team became the final check: every extracted report was reviewed before it entered their ERP.</p>
+        </section>
+
+        <section class="case-section reveal" id="impact">
+          <span class="case-section__num">05</span>
+          <h2>Business impact</h2>
+          <figure class="diagram diagram--bare">
+            <div class="diagram__media">
+              <img src="../assets/clinicalextract-metrics.png" alt="Three headline results: 70% less manual work, report types supported grew from 4 to 10+, and 60% of records digitised within the first month." data-fallback>
+              <div class="diagram__frame diagram__placeholder">Metrics graphic</div>
+            </div>
+            <figcaption>Headline results after rollout.</figcaption>
+          </figure>
+          <ul class="decisions">
+            <li><strong>70% less manual work.</strong> The client’s team moved from typing every value by hand to only reviewing the extracted output. We estimated this by comparing the time to fill in one report manually with the time to check an extracted one.</li>
+            <li><strong>Scaled from 4 to 10+ report types.</strong> Adding a report type only needed a new system prompt listing its parameters. I built a second API endpoint so the client could upload new prompts themselves using a template, filling in the report type and parameters without needing us.</li>
+            <li><strong>60% of records digitised within a month.</strong> The client cleared most of their backlog in the first month and continued using the system for new reports.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal" id="lessons">
+          <span class="case-section__num">06</span>
+          <h2>Design trade-offs and lessons learned</h2>
+          <ul class="decisions">
+            <li><strong>Human-in-the-loop over automated evaluation.</strong> Scan quality varied too much to use OCR or another tool as a reliable ground truth, so evaluation had to be manual. I did the initial evaluation, and after handover the client’s team reviewed every report before it entered their ERP. In medical records, a correct value matters more than speed, so we accepted the slower review step.</li>
+            <li><strong>Accuracy over cost and latency.</strong> The verification pass doubles the LLM calls per report and adds processing time. We accepted this because it caught the missed and hallucinated values that a single pass let through.</li>
+            <li><strong>Lesson: tell the model what not to do.</strong> The biggest gains came from the system prompt, especially from being explicit about what the model shouldn’t do. Telling the LLM that it’s acceptable to leave a field empty when the value isn’t in the report did more to reduce hallucinations than any other change.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+
+    <nav class="container pager" aria-label="More projects">
+      <a class="pager__link" href="emotion-recognition.html">
+        <span class="pager__dir"><span class="arrow" aria-hidden="true">&larr;</span> Previous</span>
+        <span class="pager__title">Multimodal Emotion Recognition using Transformers</span>
+      </a>
+      <a class="pager__link pager__link--next" href="askyourdata.html">
+        <span class="pager__dir">Next <span class="arrow" aria-hidden="true">&rarr;</span></span>
+        <span class="pager__title">AskYourData</span>
+      </a>
+    </nav>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="../js/site.js"></script>
+  <script src="../js/project.js"></script>
+</body>
+</html>
