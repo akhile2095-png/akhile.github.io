@@ -164,10 +164,14 @@
 /* ---------- Summary ---------- */
 
 .summary__lead {
-  max-width: 40rem;
   font-family: var(--font-serif);
   font-size: var(--fs-lg);
   line-height: 1.45;
+}
+
+.summary__label {
+  display: block;
+  margin-top: 2.25rem;
 }
 
 .highlights {
@@ -175,7 +179,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.75rem 2.5rem;
-  margin-top: 2.5rem;
+  margin-top: 1.1rem;
 }
 
 .highlights li {
