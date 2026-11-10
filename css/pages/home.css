@@ -210,9 +210,9 @@
 
 .stack__row {
   display: grid;
-  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
   gap: 0.75rem 2rem;
-  padding: 1.1rem 0;
+  padding: 1.4rem 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -226,9 +226,9 @@
 
 .stack__title {
   font-family: var(--font-sans);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
   font-weight: 500;
-  padding-top: 0.2rem;
+  padding-top: 0.3rem;
 }
 
 /* Row title: a short accent rule draws in on hover */
@@ -240,6 +240,16 @@
 .stack__row:hover .stack__title {
   color: var(--accent);
   transform: translateX(3px);
+}
+
+/* Tags: larger than the site default so the stack reads at a glance */
+.stack .tag-list {
+  gap: 0.55rem;
+}
+
+.stack .tag {
+  padding: 0.4rem 0.95rem;
+  font-size: var(--fs-base);
 }
 
 /* Tags: gentle lift on hover */
